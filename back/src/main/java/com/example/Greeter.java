@@ -10,7 +10,7 @@ import javax.inject.Inject;
 public class Greeter {
 	
 	@Inject
-	ServiceImpl service;
+	ServiceImpl service; 
 	
 	public void greet(PrintStream to, String name) {
 		to.println(createGreeting(name));
