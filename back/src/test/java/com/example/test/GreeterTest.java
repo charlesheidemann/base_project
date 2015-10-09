@@ -1,13 +1,13 @@
 package com.example.test;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import org.apache.log4j.Logger;
 import org.back.model.Pais;
 import org.back.model.QPais;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -65,27 +65,25 @@ public class GreeterTest {
 	}
 
 	private void load(){
+		this.em.getTransaction().begin();
 		Pais pais1 = new Pais();
 		pais1.setNome("Brasil");
 		Pais pais2 = new Pais();
 		pais2.setNome("Paraguai");
 		this.em.persist(pais1);
-		this.em.persist(pais1);
+		this.em.persist(pais2);
+		this.em.getTransaction().commit();	
+	}
+
+	private JPAQuery<Void> query() {
+		return new JPAQuery<Void>(em);
 	}
 	
 	@Test
 	public void should_create_greeting() {
 		QPais pais = QPais.pais;
-		JPAQuery<?> query = new JPAQuery<Void>(em);
-		
-		List<Pais> paises = query.from(pais).select(pais).fetch();
-		for (Pais p : paises) {
-			log.info("Pais:" + p.getNome());
-		}
-		
-
-		Assert.assertEquals("Hello, Earthling!", 
-			greeter.createGreeting("Earthling"));
-			greeter.greet(System.out, "Earthling");
+		List<Pais> paises = query().from(pais).select(pais).fetch();
+		paises.stream().forEach(p -> log.info(p.getNome()));
 	}
+
 }
